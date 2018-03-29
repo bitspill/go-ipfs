@@ -405,7 +405,12 @@ You can now check what blocks have been created by:
 
 							break LOOP
 						}
-						output := out.(*coreunix.AddedObject)
+						output, ok := out.(*coreunix.AddedObject)
+						if !ok {
+							fmt.Fprintln(os.Stdout, out)
+							res.SetError(errors.New("out is not *coreunix.AddedObject"),
+								cmdkit.ErrClient)
+							return						}
 						if len(output.Hash) > 0 {
 							lastHash = output.Hash
 							if quieter {
